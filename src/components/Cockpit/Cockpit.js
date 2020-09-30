@@ -1,7 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import classes from './Cockpit.css';
+import AuthContext from '../../context/auth-context';
 
 const cockpit = (props) => {
+    const toogleButtonRef = useRef(null);
+
+    const authContext = useContext(AuthContext);
 
     useEffect(() => {
         console.log('[Cockpit.js] useEffect');
@@ -21,6 +25,10 @@ const cockpit = (props) => {
             console.log('[Cockpit.js] 2nd cleanup work in useEffect');
         }
     });
+
+    useEffect(() => {
+        toogleButtonRef.current.click();
+    }, []);
     // her update olduğunda 
 
     const assignedClasses = [];
@@ -46,8 +54,16 @@ const cockpit = (props) => {
               Toogle Name
             </StyledButton> */}
             <button
-                className={btnClass}
-                onClick={props.clicked}>Toogle Name</button>
+                ref={toogleButtonRef}
+                className={btnClass.join(' ')}
+                onClick={props.clicked}>Toogle Name
+            </button>
+            {/* <AuthContext.Consumer>
+                {context => <button onClick={context.login}>Login</button>}
+            
+            </AuthContext.Consumer> */}
+
+            <button onClick={authContext.login}>Login</button>
         </div>
     );
 };
