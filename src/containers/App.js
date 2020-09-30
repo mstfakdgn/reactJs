@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import './App.css';
-import Person from './Person/Person';
+import classes from './App.css';
+import Persons from '../components/Persons/Persons';
+//import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
+import Cockpit from '../components/Cockpit/Cockpit';
 // import styled from 'styled-components';
 
 
@@ -17,6 +19,10 @@ import Person from './Person/Person';
 // `;
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    console.log('[App.js] constructor');
+  }
 
   state = {
     persons: [
@@ -24,7 +30,27 @@ class App extends Component {
       { id: 2, name: 'Gülhan', age: 55 },
       { id: 3, name: 'Kadir', age: 56 },
     ],
-    showPersons: false
+    showPersons: false,
+    showCockpit: true,
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    console.log('[App.js] getDerivedStateFromProps', props);
+    return state;
+  }
+
+  componentDidMount() {
+    console.log('[App.js] componentDidMount');
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('[App.js] shouldComponentUpdate');
+    return true;
+  }
+
+  componentDidUpdate() {
+    console.log('[App.js] componentDidUpdate');
+
   }
 
   // switchNameHandler = (newName) => {
@@ -71,6 +97,8 @@ class App extends Component {
   }
 
   render() {
+    console.log('[App.js] render');
+
     // const style = {
     //   backgroundColor: 'green',
     //   color: 'white',
@@ -85,20 +113,15 @@ class App extends Component {
     // }
 
     let persons = null;
+    //let btnClass = [classes.Button];
 
     if (this.state.showPersons) {
       persons = (
-        <div>
-          {this.state.persons.map((person, index) => {
-            return <Person
-              name={person.name}
-              age={person.age}
-              click={this.deletePersonHandler.bind(this, index)}
-              key={person.id}
-              changed={(event) => this.nameChangedHandler(event, person.id)}
-            />
-          })}
-        </div>
+        <Persons
+          persons={this.state.persons}
+          clicked={this.deletePersonHandler}
+          changed={this.nameChangedHandler}
+        ></Persons>
       );
 
       // style.backgroundColor = 'red';
@@ -107,30 +130,23 @@ class App extends Component {
       //   backgroundColor: 'salmon',
       //   color: 'black'
       // }
-    }
-    const classes = [];
-
-    if (this.state.persons.length <= 2) {
-      classes.push('red');// push red inside array classes= ['red']
-    }
-
-    if (this.state.persons.length <= 1) {
-      classes.push('bold');// push bold inside array classes= ['red', 'bold']
+      // btnClass.push(classes.Red);
     }
 
     return (
-      <div className="App" >
-        <h1>Hı ı m react</h1>
-        <p className={classes.join(' ')}>This is working</p>
-        {/* <StyledButton alt={this.state.showPersons}
-          onClick={this.togglePersonsHandler}>
-          Toogle Name
-        </StyledButton> */}
-        <button
-          className="button"
-          onClick={this.togglePersonsHandler}>Toogle Name</button>
-        {persons}
-      </div>
+      <div className={classes.App} >
+        <button onClick={() => {
+          this.setState({ showCockpit: false })
+        }
+        }>Remove Cockpit</button>
+        {this.state.showCockpit ? <Cockpit
+          title={this.props.appTitle}
+          personsLength={this.state.persons.length}
+          showPersons={this.state.showPersons}
+          clicked={this.togglePersonsHandler}
+        ></Cockpit> : null}
+        { persons}
+      </div >
     );
     // return React.createElement('div', {className:'App'}, React.createElement('h1', null, 'Hı I\'m react'));
   }
